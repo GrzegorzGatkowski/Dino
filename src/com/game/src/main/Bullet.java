@@ -1,42 +1,37 @@
 package com.game.src.main;
 
+import com.game.src.main.com.game.src.main.classes.EntityFriendly;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-public class Bullet {
+public class Bullet extends GameObject implements EntityFriendly {
 
-    private double x;
-    private double y;
-    private Textures tex;
+    private Textures textures;
+    private Game game;
 
-    public Bullet(double x, double y, Textures tex) {
-        this.x = x;
-        this.y = y;
-        this.tex = tex;
-
+    public Bullet(double x, double y, Textures textures, Game game) {
+        super(x, y);
+        this.textures = textures;
+        this.game = game;
     }
 
-    public void tick (){
+    public Rectangle getBounds(){
+        return new Rectangle((int)x, (int)y, 32, 32);
+    }
+
+    public void tick() {
         x -= 5;
     }
 
-    public void render (Graphics g){
-        g.drawImage(tex.missile, (int)x, (int)y, null);
+    public void render(Graphics g) {
+        g.drawImage(textures.missile, (int) x, (int) y, null);
     }
 
     public double getX() {
         return x;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
     public double getY() {
         return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 }

@@ -1,11 +1,15 @@
 package com.game.src.main;
 
+import com.game.src.main.com.game.src.main.classes.EntityEnemies;
+import com.game.src.main.com.game.src.main.classes.EntityFriendly;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class Game extends Canvas implements Runnable{
 
@@ -20,12 +24,41 @@ public class Game extends Canvas implements Runnable{
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private BufferedImage spriteSheet = null;
     private BufferedImage background = null;
+    private BufferedImage menuStart = null;
 
     private boolean isShooting = false;
+    private int enemyCount = 3;
+    private int enemyKilled = 0;
 
-    private Player p;
-    private Controller c;
-    private Textures tex;
+    private Player player;
+    private Controller controller;
+    private Textures textures;
+    private Menu menu;
+
+    public LinkedList<EntityFriendly> entityFriendly;
+    public LinkedList<EntityEnemies> entityEnemies;
+
+    public static enum STATE{
+        MENU, GAME
+    };
+
+    public static STATE State = STATE.MENU;
+
+    public int getEnemyCount() {
+        return enemyCount;
+    }
+
+    public void setEnemyCount(int enemyCount) {
+        this.enemyCount = enemyCount;
+    }
+
+    public int getEnemyKilled() {
+        return enemyKilled;
+    }
+
+    public void setEnemyKilled(int enemyKilled) {
+        this.enemyKilled = enemyKilled;
+    }
 
     public BufferedImage getSpriteSheet() {
         return spriteSheet;
@@ -38,17 +71,21 @@ public class Game extends Canvas implements Runnable{
         try {
             background = loader.loadImage("/res/sand.jpg");
             spriteSheet = loader.loadImage("/res/Dino.png");
+            menuStart = loader.loadImage("/res/menuStart.jpg");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        addKeyListener(new KeyInput(this));
+        this.addKeyListener(new KeyInput(this));
+        this.addMouseListener(new MouseInput());
+        textures = new Textures(this);
+        player = new Player(600, 200, textures);
+        controller = new Controller(this, textures);
+        menu = new Menu();
+        controller.createEnemy(enemyCount);
 
-        tex = new Textures(this);
-
-        p = new Player(600, 200, tex);
-        c = new Controller(this, tex);
-
+        entityFriendly = controller.getEntityFriendly();
+        entityEnemies = controller.getEntitiyEnemies();
     }
 
     private synchronized void start(){
@@ -71,36 +108,38 @@ public class Game extends Canvas implements Runnable{
         System.exit(1);
     }
 
-    public void keyPressed(KeyEvent e){
+    public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_RIGHT){
-            p.setVelX(2);
-        } else if (key == KeyEvent.VK_LEFT){
-            p.setVelX(-2);
-        } else if (key == KeyEvent.VK_UP){
-            p.setVelY(-2);
-        } else if (key == KeyEvent.VK_DOWN){
-            p.setVelY(2);
-        } else if ( key == KeyEvent.VK_SPACE && !isShooting){
-            isShooting = true;
-            c.addBullet(new Bullet(p.getX(), p.getY(), tex));
+        if (State == STATE.GAME) {
+            if (key == KeyEvent.VK_RIGHT) {
+                player.setVelX(2);
+            } else if (key == KeyEvent.VK_LEFT) {
+                player.setVelX(-2);
+            } else if (key == KeyEvent.VK_UP) {
+                player.setVelY(-2);
+            } else if (key == KeyEvent.VK_DOWN) {
+                player.setVelY(2);
+            } else if (key == KeyEvent.VK_SPACE && !isShooting) {
+                isShooting = true;
+                controller.addEntity(new Bullet(player.getX(), player.getY(), textures, this));
+            }
         }
     }
 
-    public void keyReleased(KeyEvent e){
+    public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_RIGHT){
-            p.setVelX(0);
-        } else if (key == KeyEvent.VK_LEFT){
-            p.setVelX(0);
-        } else if (key == KeyEvent.VK_UP){
-            p.setVelY(0);
-        } else if (key == KeyEvent.VK_DOWN){
-            p.setVelY(0);
-        }else if ( key == KeyEvent.VK_SPACE){
-            isShooting = false;
+        if (State == STATE.GAME) {
+            if (key == KeyEvent.VK_RIGHT) {
+                player.setVelX(0);
+            } else if (key == KeyEvent.VK_LEFT) {
+                player.setVelX(0);
+            } else if (key == KeyEvent.VK_UP) {
+                player.setVelY(0);
+            } else if (key == KeyEvent.VK_DOWN) {
+                player.setVelY(0);
+            } else if (key == KeyEvent.VK_SPACE) {
+                isShooting = false;
+            }
         }
     }
 
@@ -119,9 +158,7 @@ public class Game extends Canvas implements Runnable{
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         game.start();
-
     }
-
     @Override
     public void run() {
         init();
@@ -151,42 +188,44 @@ public class Game extends Canvas implements Runnable{
                 uptades = 0;
                 frames = 0;
             }
-
         }
         stop();
-
     }
 
-    private void tick (){
-        p.tick();
-        c.tick();
+    private void tick () {
+        if (State == STATE.GAME) {
+            player.tick();
+            controller.tick();
 
+            if (enemyKilled >= enemyCount) {
+                enemyCount += 1;
+                enemyKilled = 0;
+                controller.createEnemy(enemyCount);
+            }
+        }
     }
 
     private void render(){
-
         BufferStrategy bs = this.getBufferStrategy();
-
         if (bs == null){
             createBufferStrategy(3);
             return;
         }
-
         Graphics g = bs.getDrawGraphics();
-        ////////////
-
 
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
-        g.drawImage(background,0,0,null);
-        p.render(g);
-        c.render(g);
 
-        ////////////
+        if (State == STATE.GAME) {
+            g.drawImage(background,0,0,null);
+            player.render(g);
+            controller.render(g);
+        } else if (State == STATE.MENU){
+            g.drawImage(menuStart,0,0,null);
+            menu.render(g);
+        }
         g.dispose();
         bs.show();
-
         return;
-
     }
 }

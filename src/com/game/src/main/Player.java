@@ -1,22 +1,22 @@
 package com.game.src.main;
 
+import com.game.src.main.com.game.src.main.classes.EntityFriendly;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-public class Player {
-
-    private double x;
-    private double y;
+public class Player extends GameObject implements EntityFriendly {
 
     private double velX;
     private double velY;
 
-    private Textures tex;
+    private Textures textures;
 
-    public Player (double x, double y, Textures tex){
-        this.x = x;
-        this.y = y;
-        this.tex = tex;
+    public Player (double x, double y, Textures textures){
+        super(x, y);
+        this.textures = textures;
+    }
+    public Rectangle getBounds(){
+        return new Rectangle((int)x, (int)y, 32, 32);
     }
 
     public void tick (){
@@ -36,7 +36,7 @@ public class Player {
     }
 
     public void render (Graphics g){
-        g.drawImage(tex.player, (int)x, (int)y, null);
+        g.drawImage(textures.player, (int)x, (int)y, null);
 
     }
 
@@ -44,28 +44,12 @@ public class Player {
         return x;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
     public double getY() {
         return y;
     }
 
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getVelX() {
-        return velX;
-    }
-
     public void setVelX(double velX) {
         this.velX = velX;
-    }
-
-    public double getVelY() {
-        return velY;
     }
 
     public void setVelY(double velY) {

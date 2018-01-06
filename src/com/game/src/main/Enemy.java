@@ -1,42 +1,53 @@
 package com.game.src.main;
 
+import com.game.src.main.com.game.src.main.classes.EntityEnemies;
+import com.game.src.main.com.game.src.main.classes.EntityFriendly;
+
 import java.awt.*;
+import java.util.Random;
 
-public class Enemy {
+public class Enemy extends GameObject implements EntityEnemies {
 
-    private double x;
-    private double y;
+    private Random random = new Random ();
 
-    private Textures tex;
+    private Textures textures;
+    private Game game;
+    private Controller controller;
 
     public double getX() {
         return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
     }
 
     public double getY() {
         return y;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public Enemy(double x, double y, Textures textures, Controller controller, Game game) {
+        super(x, y);
+        this.textures = textures;
+        this.controller = controller;
+        this.game = game;
     }
 
-    public Enemy(double x, double y, Textures tex) {
-        this.x = x;
-        this.y = y;
-        this.tex = tex;
+    public Rectangle getBounds(){
+        return new Rectangle((int)x, (int)y, 32, 32);
     }
 
     public void tick(){
-        x += 2;
+        x += 1;
+
+        if (x > Game.WIDTH * Game.SCALE){
+            y = random.nextInt(Game.HEIGHT * Game.SCALE);
+            x = 0;
+        }
+        if (Physics.collision(this, game.entityFriendly)){
+            controller.removeEntity(this);
+            game.setEnemyKilled(game.getEnemyKilled() + 1);
+        }
     }
 
     public void render (Graphics g){
-        g.drawImage(tex.enemy, (int)x, (int)y, null);
+        g.drawImage(textures.enemy, (int)x, (int)y, null);
 
     }
 }
