@@ -3,26 +3,20 @@ package com.game.src.main;
 import com.game.src.main.com.game.src.main.classes.EntityEnemies;
 import com.game.src.main.com.game.src.main.classes.EntityFriendly;
 
-import java.util.LinkedList;
-
 public class Physics {
 
-    public static boolean collision (EntityFriendly eFriendly, LinkedList<EntityEnemies> entityEnemies){
+    public static boolean collision (EntityFriendly eFriendly,EntityEnemies eEnemies){
 
-        for (int i = 0; i < entityEnemies.size(); i++){
-            if (eFriendly.getBounds().intersects(entityEnemies.get(i).getBounds())){
+            if (eFriendly.getBounds().intersects(eEnemies.getBounds())){
                 return true;
-            }
         }
         return false;
     }
 
-    public static boolean collision (EntityEnemies eEnemies, LinkedList<EntityFriendly> entityFriendly){
+    public static boolean collision (EntityEnemies eEnemies, EntityFriendly eFriendly){
 
-        for (int i = 0; i < entityFriendly.size(); i++){
-            if (eEnemies.getBounds().intersects(entityFriendly.get(i).getBounds())){
+            if (eEnemies.getBounds().intersects(eFriendly.getBounds())){
                 return true;
-            }
         }
         return false;
     }

@@ -17,6 +17,7 @@ public class Game extends Canvas implements Runnable{
     public static final int HEIGHT = WIDTH / 12 * 9;
     public static final int SCALE = 2;
     public static final String TITLE = "2D Dino's Battles";
+    public static int HEALTH = 200;
 
     private boolean running = false;
     private Thread thread;
@@ -79,8 +80,8 @@ public class Game extends Canvas implements Runnable{
         this.addKeyListener(new KeyInput(this));
         this.addMouseListener(new MouseInput());
         textures = new Textures(this);
-        player = new Player(600, 200, textures);
         controller = new Controller(this, textures);
+        player = new Player(600, 200, textures, this, controller);
         menu = new Menu();
         controller.createEnemy(enemyCount);
 
@@ -121,7 +122,7 @@ public class Game extends Canvas implements Runnable{
                 player.setVelY(2);
             } else if (key == KeyEvent.VK_SPACE && !isShooting) {
                 isShooting = true;
-                controller.addEntity(new Bullet(player.getX(), player.getY(), textures, this));
+                controller.addEntity(new Bullet(player.getX(), player.getY(), textures, this, controller));
             }
         }
     }
@@ -220,6 +221,16 @@ public class Game extends Canvas implements Runnable{
             g.drawImage(background,0,0,null);
             player.render(g);
             controller.render(g);
+
+            g.setColor(Color.gray);
+            g.fillRect(5,5, 200, 20);
+
+            g.setColor(Color.green);
+            g.fillRect(5,5, HEALTH, 20);
+
+            g.setColor(Color.white);
+            g.drawRect(5,5, 200, 20);
+
         } else if (State == STATE.MENU){
             g.drawImage(menuStart,0,0,null);
             menu.render(g);

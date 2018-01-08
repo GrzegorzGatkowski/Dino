@@ -34,16 +34,23 @@ public class Enemy extends GameObject implements EntityEnemies {
     }
 
     public void tick(){
-        x += 1;
+        x += 2;
 
         if (x > Game.WIDTH * Game.SCALE){
-            y = random.nextInt(Game.HEIGHT * Game.SCALE);
+            y = (random.nextInt(Game.HEIGHT * Game.SCALE)+50)*0.8;
             x = 0;
         }
-        if (Physics.collision(this, game.entityFriendly)){
-            controller.removeEntity(this);
-            game.setEnemyKilled(game.getEnemyKilled() + 1);
+
+        for (int i = 0; i < game.entityFriendly.size(); i++){
+            EntityFriendly tempFriend = game.entityFriendly.get(i);
+                if (Physics.collision(this, tempFriend)){
+                    controller.removeEntity(tempFriend);
+                    controller.removeEntity(this);
+                    game.setEnemyKilled(game.getEnemyKilled() + 1);
+            }
         }
+
+
     }
 
     public void render (Graphics g){

@@ -10,7 +10,7 @@ import java.util.Random;
 public class Controller {
 
     private LinkedList<EntityFriendly> entityFriendly = new LinkedList<>();
-    private LinkedList<EntityEnemies> entitiyEnemies = new LinkedList<>();
+    private LinkedList<EntityEnemies> entityEnemies = new LinkedList<>();
 
     Textures textures;
     EntityFriendly eFriendly;
@@ -28,8 +28,8 @@ public class Controller {
             eFriendly = entityFriendly.get(i);
             eFriendly.tick();
         }
-        for (int i = 0; i < entitiyEnemies.size(); i++) {
-            eEnemies = entitiyEnemies.get(i);
+        for (int i = 0; i < entityEnemies.size(); i++) {
+            eEnemies = entityEnemies.get(i);
             eEnemies.tick();
         }
     }
@@ -39,8 +39,8 @@ public class Controller {
             eFriendly = entityFriendly.get(i);
             eFriendly.render(g);
         }
-        for (int i = 0; i < entitiyEnemies.size(); i++) {
-            eEnemies = entitiyEnemies.get(i);
+        for (int i = 0; i < entityEnemies.size(); i++) {
+            eEnemies = entityEnemies.get(i);
             eEnemies.render(g);
         }
     }
@@ -52,15 +52,15 @@ public class Controller {
        entityFriendly.remove(eFriendly);
     }
     public void addEntity(EntityEnemies eEnemies){
-        entitiyEnemies.add(eEnemies);
+        entityEnemies.add(eEnemies);
     }
     public void removeEntity(EntityEnemies eEnemies){
-        entitiyEnemies.remove(eEnemies);
+        entityEnemies.remove(eEnemies);
     }
 
     public void createEnemy (int enemyCount){
         for (int i = 0; i < enemyCount; i++){
-          addEntity(new Enemy(0, random.nextInt(Game.HEIGHT * Game.SCALE), textures, this, game));
+          addEntity(new Enemy(0, (random.nextInt(Game.HEIGHT * Game.SCALE)+50)*0.8, textures, this, game));
         }
     }
 
@@ -69,6 +69,6 @@ public class Controller {
     }
 
     public LinkedList<EntityEnemies> getEntitiyEnemies() {
-        return entitiyEnemies;
+        return entityEnemies;
     }
 }
