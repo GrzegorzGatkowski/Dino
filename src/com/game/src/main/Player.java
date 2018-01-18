@@ -14,6 +14,22 @@ public class Player extends GameObject implements EntityFriendly {
     Game game;
     private Textures textures;
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setVelX(double velX) {
+        this.velX = velX;
+    }
+
+    public void setVelY(double velY) {
+        this.velY = velY;
+    }
+
     public Player (double x, double y, Textures textures, Game game, Controller controller){
         super(x, y);
         this.textures = textures;
@@ -43,7 +59,7 @@ public class Player extends GameObject implements EntityFriendly {
 
             if (Physics.collision(this, enemyTemp)){
                 controller.removeEntity(enemyTemp);
-                Game.HEALTH -= 10;
+                Game.HEALTH -= 20;
                 game.setEnemyKilled(game.getEnemyKilled() + 1);
             }
         }
@@ -53,21 +69,5 @@ public class Player extends GameObject implements EntityFriendly {
     public void render (Graphics g){
         g.drawImage(textures.player, (int)x, (int)y, null);
 
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setVelX(double velX) {
-        this.velX = velX;
-    }
-
-    public void setVelY(double velY) {
-        this.velY = velY;
     }
 }

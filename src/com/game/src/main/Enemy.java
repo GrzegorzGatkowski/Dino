@@ -47,6 +47,7 @@ public class Enemy extends GameObject implements EntityEnemies {
                     controller.removeEntity(tempFriend);
                     controller.removeEntity(this);
                     game.setEnemyKilled(game.getEnemyKilled() + 1);
+                    game.setScores(game.getScores() + 1);
             }
         }
 

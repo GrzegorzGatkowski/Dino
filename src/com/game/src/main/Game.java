@@ -18,6 +18,7 @@ public class Game extends Canvas implements Runnable{
     public static final int SCALE = 2;
     public static final String TITLE = "2D Dino's Battles";
     public static int HEALTH = 200;
+    public static int scores = 0;
 
     private boolean running = false;
     private Thread thread;
@@ -39,18 +40,18 @@ public class Game extends Canvas implements Runnable{
     public LinkedList<EntityFriendly> entityFriendly;
     public LinkedList<EntityEnemies> entityEnemies;
 
-    public static enum STATE{
+    public enum STATE{
         MENU, GAME
     };
 
     public static STATE State = STATE.MENU;
 
-    public int getEnemyCount() {
-        return enemyCount;
+    public static void setScores(int scores) {
+        Game.scores = scores;
     }
 
-    public void setEnemyCount(int enemyCount) {
-        this.enemyCount = enemyCount;
+    public static int getScores() {
+        return scores;
     }
 
     public int getEnemyKilled() {
@@ -213,6 +214,7 @@ public class Game extends Canvas implements Runnable{
             return;
         }
         Graphics g = bs.getDrawGraphics();
+        Graphics2D graphics2D = (Graphics2D) g;
 
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
@@ -230,6 +232,11 @@ public class Game extends Canvas implements Runnable{
 
             g.setColor(Color.white);
             g.drawRect(5,5, 200, 20);
+
+            Font font1 = new Font("arial", Font.BOLD, 20);
+            g.setFont(font1);
+            g.setColor(Color.black);
+            g.drawString("" + scores, (WIDTH * SCALE) - 100,  20);
 
         } else if (State == STATE.MENU){
             g.drawImage(menuStart,0,0,null);
