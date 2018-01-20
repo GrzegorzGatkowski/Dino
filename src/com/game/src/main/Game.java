@@ -19,18 +19,21 @@ public class Game extends Canvas implements Runnable{
     public static final String TITLE = "2D Dino's Battles";
     public static int HEALTH = 200;
     public static int scores = 0;
+    public static int level = 1;
 
     private boolean running = false;
     private Thread thread;
 
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private BufferedImage spriteSheet = null;
-    private BufferedImage background = null;
+    private BufferedImage backgroundSand = null;
+    private BufferedImage backgroundGrass = null;
     private BufferedImage menuStart = null;
 
     private boolean isShooting = false;
     private int enemyCount = 3;
     private int enemyKilled = 0;
+    private int allKilled = 0;
 
     private Player player;
     private Controller controller;
@@ -54,6 +57,14 @@ public class Game extends Canvas implements Runnable{
         return scores;
     }
 
+    public void setAllKilled(int allKilled) {
+        this.allKilled = allKilled;
+    }
+
+    public int getAllKilled() {
+        return allKilled;
+    }
+
     public int getEnemyKilled() {
         return enemyKilled;
     }
@@ -71,7 +82,8 @@ public class Game extends Canvas implements Runnable{
         BufferedImageLoader loader = new BufferedImageLoader();
 
         try {
-            background = loader.loadImage("/res/sand.jpg");
+            backgroundSand = loader.loadImage("/res/sand.jpg");
+            backgroundGrass = loader.loadImage("/res/grass.jpg");
             spriteSheet = loader.loadImage("/res/Dino.png");
             menuStart = loader.loadImage("/res/menuStart.jpg");
         } catch (IOException e) {
@@ -204,6 +216,11 @@ public class Game extends Canvas implements Runnable{
                 enemyKilled = 0;
                 controller.createEnemy(enemyCount);
             }
+            if (allKilled >= 20) {
+                level++;
+                Enemy.velX+=0.5;
+                allKilled = 0;
+            }
         }
     }
 
@@ -214,20 +231,33 @@ public class Game extends Canvas implements Runnable{
             return;
         }
         Graphics g = bs.getDrawGraphics();
-        Graphics2D graphics2D = (Graphics2D) g;
 
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
-
         if (State == STATE.GAME) {
-            g.drawImage(background,0,0,null);
+            switch ( level ){
+                case 1:
+                    g.drawImage(backgroundSand,0,0,null);
+                    break;
+                case 2:
+                    g.drawImage(backgroundGrass,0,0,null);
+                    textures.enemy = textures.enemy1;
+                    break;
+                case 3:
+                    g.drawImage(backgroundGrass,0,0,null);
+                    textures.enemy = textures.enemy2;
+                    break;
+                default:
+                    g.drawImage(backgroundGrass,0,0,null);
+            }
+
             player.render(g);
             controller.render(g);
 
             g.setColor(Color.gray);
             g.fillRect(5,5, 200, 20);
 
-            g.setColor(Color.green);
+            g.setColor(Color.blue);
             g.fillRect(5,5, HEALTH, 20);
 
             g.setColor(Color.white);

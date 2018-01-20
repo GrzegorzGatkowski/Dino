@@ -8,11 +8,19 @@ import java.util.Random;
 
 public class Enemy extends GameObject implements EntityEnemies {
 
+    public static double velX = 2;
     private Random random = new Random ();
-
     private Textures textures;
     private Game game;
     private Controller controller;
+
+    public double getVelX() {
+        return velX;
+    }
+
+    public void setVelX(double velX) {
+        this.velX = velX;
+    }
 
     public double getX() {
         return x;
@@ -34,11 +42,15 @@ public class Enemy extends GameObject implements EntityEnemies {
     }
 
     public void tick(){
-        x += 2;
+        x += velX;
 
         if (x > Game.WIDTH * Game.SCALE){
             y = (random.nextInt(Game.HEIGHT * Game.SCALE)+50)*0.8;
             x = 0;
+            game.setScores(game.getScores() - 2);
+            Game.HEALTH -= 5;
+            if (game.getScores() < 0)
+                game.setScores(0);
         }
 
         for (int i = 0; i < game.entityFriendly.size(); i++){
@@ -47,7 +59,8 @@ public class Enemy extends GameObject implements EntityEnemies {
                     controller.removeEntity(tempFriend);
                     controller.removeEntity(this);
                     game.setEnemyKilled(game.getEnemyKilled() + 1);
-                    game.setScores(game.getScores() + 1);
+                    game.setScores(game.getScores() + 5);
+                    game.setAllKilled(game.getAllKilled() + 1);
             }
         }
 
